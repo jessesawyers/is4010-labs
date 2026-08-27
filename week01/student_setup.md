@@ -2,7 +2,7 @@
 
 - GitHub username: `jessesawyers`
 - Fork URL: `https://github.com/jessesawyers/is4010-labs`
-- Local clone verified: `yes-or-no`
+- Local clone verified: `yes`
 - uv version: `0.12.5`
 - Python version: `3.12.14`
 
