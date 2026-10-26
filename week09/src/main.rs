@@ -43,8 +43,10 @@ fn main() {
 /// assert_eq!(add(2, 3), 5);
 /// assert_eq!(add(-1, 1), 0);
 /// ```
-fn add(_a: i32, _b: i32) -> i32 {
-    todo!("Implement add")
+fn add(a: i32, b: i32) -> i32 {
+    // i32 means a signed 32-bit integer; -> i32 says we return that type.
+    // Rust returns the final expression when it has no semicolon.
+    a + b
 }
 
 /// Returns the product of `a` and `b`.
@@ -54,8 +56,8 @@ fn add(_a: i32, _b: i32) -> i32 {
 /// assert_eq!(multiply(3, 4), 12);
 /// assert_eq!(multiply(0, 99), 0);
 /// ```
-fn multiply(_a: i32, _b: i32) -> i32 {
-    todo!("Implement multiply")
+fn multiply(a: i32, b: i32) -> i32 {
+    a * b
 }
 
 // ============================================================================
@@ -69,8 +71,10 @@ fn multiply(_a: i32, _b: i32) -> i32 {
 /// assert!(is_even(4));
 /// assert!(!is_even(7));
 /// ```
-fn is_even(_n: i32) -> bool {
-    todo!("Implement is_even")
+fn is_even(n: i32) -> bool {
+    // % gives the remainder. A remainder of 0 means n is divisible by 2.
+    // == compares values, producing a bool: true or false.
+    n % 2 == 0
 }
 
 // ============================================================================
@@ -85,8 +89,14 @@ fn is_even(_n: i32) -> bool {
 /// assert_eq!(max(3, 9), 9);
 /// assert_eq!(max(5, 5), 5);
 /// ```
-fn max(_a: i32, _b: i32) -> i32 {
-    todo!("Implement max")
+fn max(a: i32, b: i32) -> i32 {
+    // An if/else can produce a value in Rust. Return the chosen branch's value.
+    if a > b {
+        a
+    } else {
+        // Choose b when it is larger or when both numbers are equal.
+        b
+    }
 }
 
 // ============================================================================
@@ -100,8 +110,8 @@ fn max(_a: i32, _b: i32) -> i32 {
 /// assert_eq!(square(5), 25);
 /// assert_eq!(square(0), 0);
 /// ```
-fn square(_n: i32) -> i32 {
-    todo!("Implement square")
+fn square(n: i32) -> i32 {
+    n * n
 }
 
 // ============================================================================
@@ -115,8 +125,11 @@ fn square(_n: i32) -> i32 {
 /// assert_eq!(reverse_string("hello"), "olleh");
 /// assert_eq!(reverse_string(""), "");
 /// ```
-fn reverse_string(_s: &str) -> String {
-    todo!("Implement reverse_string")
+fn reverse_string(s: &str) -> String {
+    // &str borrows text to read; String is the new string we return.
+    // chars() reads Unicode characters, rev() reverses their order,
+    // and collect() gathers them into a String.
+    s.chars().rev().collect()
 }
 
 /// Joins words with the given separator.
@@ -126,8 +139,11 @@ fn reverse_string(_s: &str) -> String {
 /// assert_eq!(concat_with_separator(&["hello", "world"], "-"), "hello-world");
 /// assert_eq!(concat_with_separator(&[], ","), "");
 /// ```
-fn concat_with_separator(_words: &[&str], _sep: &str) -> String {
-    todo!("Implement concat_with_separator")
+fn concat_with_separator(words: &[&str], sep: &str) -> String {
+    // &[&str] borrows a slice (sequence) of text values.
+    // join() puts sep between words, with no separator at either end.
+    // An empty slice produces an empty String.
+    words.join(sep)
 }
 
 // ============================================================================
@@ -141,8 +157,25 @@ fn concat_with_separator(_words: &[&str], _sep: &str) -> String {
 /// assert_eq!(find_max_in_vec(&[1, 5, 3]), Some(5));
 /// assert_eq!(find_max_in_vec(&[]), None);
 /// ```
-fn find_max_in_vec(_numbers: &[i32]) -> Option<i32> {
-    todo!("Implement find_max_in_vec")
+fn find_max_in_vec(numbers: &[i32]) -> Option<i32> {
+    // &[i32] borrows a slice of integers. Option<i32> is Some(value) or None.
+    if numbers.is_empty() {
+        // Stop before accessing numbers[0], which does not exist in an empty slice.
+        return None;
+    }
+
+    // mut allows largest to change. Start with the first number, not 0,
+    // so the result is correct even when all the numbers are negative.
+    let mut largest = numbers[0];
+    // &number copies each integer from the borrowed slice into number.
+    for &number in numbers {
+        if number > largest {
+            // Keep the largest value found so far.
+            largest = number;
+        }
+    }
+
+    Some(largest) // Wrap the answer in Some because a maximum was found.
 }
 
 /// Returns the count of even numbers in the slice.
@@ -152,8 +185,19 @@ fn find_max_in_vec(_numbers: &[i32]) -> Option<i32> {
 /// assert_eq!(count_evens(&[1, 2, 3, 4]), 2);
 /// assert_eq!(count_evens(&[]), 0);
 /// ```
-fn count_evens(_numbers: &[i32]) -> usize {
-    todo!("Implement count_evens")
+fn count_evens(numbers: &[i32]) -> usize {
+    // usize is an unsigned integer type used for counts and sizes.
+    // mut lets us increase this counter; an empty slice leaves it at 0.
+    let mut count = 0;
+    // Visit each integer, copying its value out of the borrowed slice.
+    for &number in numbers {
+        // Reuse the is_even function instead of repeating its calculation.
+        if is_even(number) {
+            count += 1; // Add one for each even number, including 0 and negatives.
+        }
+    }
+
+    count // No semicolon: return the finished count.
 }
 
 // ============================================================================
