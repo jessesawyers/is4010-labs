@@ -1,3 +1,4 @@
+
 # Lab 04: Data structures
 
 **Due:** Sunday at 11:59 PM  

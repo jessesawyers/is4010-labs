@@ -46,8 +46,14 @@ pub struct StudentDatabase {
 impl Student {
     /// Creates a new student with the given id, name, and email.
     /// `credits_earned` starts at 0 and `grades` starts empty.
-    pub fn new(_id: String, _name: String, _email: String) -> Student {
-        todo!("Implement Student::new")
+    pub fn new(id: String, name: String, email: String) -> Student {
+        Student {
+            id,
+            name,
+            email,
+            credits_earned: 0,  // A new student has not earned credits yet.
+            grades: Vec::new(), // Start with an empty list of course grades.
+        }
     }
 
     /// Returns a string describing the student's class standing based on credits:
@@ -56,30 +62,51 @@ impl Student {
     ///   60–89  → "Junior"
     ///   90+    → "Senior"
     pub fn class_standing(&self) -> &str {
-        todo!("Implement class_standing")
+        // Check the credit limits from lowest to highest.
+        if self.credits_earned < 30 {
+            "Freshman"
+        } else if self.credits_earned < 60 {
+            "Sophomore"
+        } else if self.credits_earned < 90 {
+            "Junior"
+        } else {
+            "Senior"
+        }
     }
 
     /// Adds `credits` to the student's `credits_earned` total.
-    pub fn add_credits(&mut self, _credits: u16) {
-        todo!("Implement add_credits")
+    pub fn add_credits(&mut self, credits: u16) {
+        self.credits_earned += credits; // Add to the existing total.
     }
 
     /// Returns `true` if the student has earned 120 or more credits.
     pub fn can_graduate(&self) -> bool {
-        todo!("Implement can_graduate")
+        self.credits_earned >= 120 // This comparison returns true or false.
     }
 
     /// Appends `course_grade` to the student's `grades` vector.
-    pub fn add_grade(&mut self, _course_grade: CourseGrade) {
-        todo!("Implement add_grade")
+    pub fn add_grade(&mut self, course_grade: CourseGrade) {
+        self.grades.push(course_grade); // push adds an item to the end of a vector.
     }
 
     /// Returns the student's GPA as a weighted average using quality points.
     /// Returns 0.0 if the student has no grades.
-    ///
     /// GPA = total quality points / total credit hours
     pub fn calculate_gpa(&self) -> f32 {
-        todo!("Implement calculate_gpa")
+        let mut total_quality_points = 0.0;
+        let mut total_credits = 0.0;
+
+        // Borrow each course with & so it stays in the student's grades list.
+        for course in &self.grades {
+            total_quality_points += course.quality_points();
+            total_credits += course.credits as f32; // Convert credits to a decimal number.
+        }
+
+        if total_credits == 0.0 {
+            return 0.0; // Avoid division by zero when there are no credit hours.
+        }
+
+        total_quality_points / total_credits
     }
 }
 
@@ -87,81 +114,118 @@ impl Grade {
     /// Returns the GPA points for this letter grade:
     ///   A → 4.0, B → 3.0, C → 2.0, D → 1.0, F → 0.0
     pub fn to_gpa_points(&self) -> f32 {
-        todo!("Implement to_gpa_points")
+        // match chooses the number that belongs to this enum variant.
+        match self {
+            Grade::A => 4.0,
+            Grade::B => 3.0,
+            Grade::C => 2.0,
+            Grade::D => 1.0,
+            Grade::F => 0.0,
+        }
     }
 
     /// Parses a grade from a string (case-insensitive).
     /// Returns `None` for unrecognised inputs.
-    ///
-    /// # Examples
-    /// ```
-    /// assert_eq!(Grade::from_string("A"), Some(Grade::A));
-    /// assert_eq!(Grade::from_string("a"), Some(Grade::A));
-    /// assert_eq!(Grade::from_string("Z"), None);
-    /// ```
-    pub fn from_string(_s: &str) -> Option<Grade> {
-        todo!("Implement from_string")
+    pub fn from_string(s: &str) -> Option<Grade> {
+        // Accept either letter case. Some holds a valid grade; None means invalid input.
+        match s {
+            "A" | "a" => Some(Grade::A),
+            "B" | "b" => Some(Grade::B),
+            "C" | "c" => Some(Grade::C),
+            "D" | "d" => Some(Grade::D),
+            "F" | "f" => Some(Grade::F),
+            _ => None, // The wildcard covers every other input.
+        }
     }
 
     /// Returns `true` for grades A, B, and C; `false` for D and F.
     pub fn is_passing(&self) -> bool {
-        todo!("Implement is_passing")
+        // The | symbol allows any of these three grades to count as passing.
+        matches!(self, Grade::A | Grade::B | Grade::C)
     }
 }
 
 impl CourseGrade {
     /// Creates a new CourseGrade.
     pub fn new(
-        _course_code: String,
-        _course_name: String,
-        _credits: u16,
-        _grade: Grade,
+        course_code: String,
+        course_name: String,
+        credits: u16,
+        grade: Grade,
     ) -> CourseGrade {
-        todo!("Implement CourseGrade::new")
+        // A field and parameter with the same name can be written just once.
+        CourseGrade {
+            course_code,
+            course_name,
+            credits,
+            grade,
+        }
     }
 
     /// Returns the quality points for this course: credits × GPA points.
     pub fn quality_points(&self) -> f32 {
-        todo!("Implement quality_points")
+        self.credits as f32 * self.grade.to_gpa_points()
     }
 }
 
 impl StudentDatabase {
     /// Creates a new, empty database.
     pub fn new() -> StudentDatabase {
-        todo!("Implement StudentDatabase::new")
+        StudentDatabase {
+            students: HashMap::new(), // Store students using their IDs as keys.
+        }
     }
 
     /// Adds a student to the database.
     /// Returns `Err` if a student with the same id already exists.
-    pub fn add_student(&mut self, _student: Student) -> Result<(), String> {
-        todo!("Implement add_student")
+    pub fn add_student(&mut self, student: Student) -> Result<(), String> {
+        if self.students.contains_key(&student.id) {
+            return Err(String::from("A student with this ID already exists."));
+        }
+
+        // Copy the ID for the key, then move the whole student into the database.
+        self.students.insert(student.id.clone(), student);
+        Ok(()) // An empty success value means the student was added.
     }
 
     /// Returns a reference to the student with the given id, or `None`.
-    pub fn find_student(&self, _id: &str) -> Option<&Student> {
-        todo!("Implement find_student")
+    pub fn find_student(&self, id: &str) -> Option<&Student> {
+        self.students.get(id) // Borrow the student, or return None if the ID is missing.
     }
 
     /// Returns a mutable reference to the student with the given id, or `None`.
-    pub fn find_student_mut(&mut self, _id: &str) -> Option<&mut Student> {
-        todo!("Implement find_student_mut")
+    pub fn find_student_mut(&mut self, id: &str) -> Option<&mut Student> {
+        self.students.get_mut(id) // A mutable reference lets the caller update the student.
     }
 
     /// Returns the total number of students in the database.
     pub fn student_count(&self) -> usize {
-        todo!("Implement student_count")
+        self.students.len() // len returns the number of entries in the map.
     }
 
     /// Returns the average GPA across all students.
     /// Returns 0.0 if there are no students.
     pub fn average_gpa(&self) -> f32 {
-        todo!("Implement average_gpa")
+        if self.students.is_empty() {
+            return 0.0; // An empty database has no GPAs to average.
+        }
+
+        let mut total_gpa = 0.0;
+        // values visits the students without including their ID keys.
+        for student in self.students.values() {
+            total_gpa += student.calculate_gpa();
+        }
+
+        total_gpa / self.student_count() as f32
     }
 
     /// Returns a vector of references to all students in the database.
     pub fn list_students(&self) -> Vec<&Student> {
-        todo!("Implement list_students")
+        let mut students = Vec::new();
+        for student in self.students.values() {
+            students.push(student); // Store references so the database keeps ownership.
+        }
+        students
     }
 }
 

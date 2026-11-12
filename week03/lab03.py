@@ -1,4 +1,6 @@
+## Lab 3: Python Basics
 import random
+## imports a random
 
 def generate_mad_lib(adjective, noun, verb):
     """Return a nonempty story containing all three supplied words."""
