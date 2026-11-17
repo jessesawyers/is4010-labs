@@ -36,33 +36,38 @@ pub struct Stack<T> {
 impl<T> Stack<T> {
     /// Creates a new, empty stack.
     pub fn new() -> Self {
-        todo!("Implement Stack::new")
+        // T is the type of item this stack holds, such as i32 or String.
+        Self {
+            data: Vec::new(), // Start with an empty vector (a growable list).
+        }
     }
 
     /// Pushes `item` onto the top of the stack.
-    pub fn push(&mut self, _item: T) {
-        todo!("Implement push")
+    pub fn push(&mut self, item: T) {
+        self.data.push(item); // The end of the vector is the top of the stack.
     }
 
     /// Removes and returns the top item, or `None` if the stack is empty.
     pub fn pop(&mut self) -> Option<T> {
-        todo!("Implement pop")
+        // Vec::pop removes the last item and returns Some(item), or None if empty.
+        self.data.pop()
     }
 
     /// Returns a reference to the top item without removing it,
     /// or `None` if the stack is empty.
     pub fn peek(&self) -> Option<&T> {
-        todo!("Implement peek")
+        // last borrows the last item, so it stays in the stack.
+        self.data.last()
     }
 
     /// Returns `true` if the stack contains no items.
     pub fn is_empty(&self) -> bool {
-        todo!("Implement is_empty")
+        self.data.is_empty() // Returns true when the vector has no items.
     }
 
     /// Returns the number of items in the stack.
     pub fn len(&self) -> usize {
-        todo!("Implement len")
+        self.data.len() // Count the items currently stored in the vector.
     }
 }
 
@@ -72,9 +77,17 @@ impl<T> Stack<T> {
 // Example: a stack with 1 pushed first and 3 pushed last prints as "[1, 2, 3]".
 // An empty stack prints as "[]".
 // ============================================================================
-impl<T: fmt::Debug> fmt::Display for Stack<T> {
-    fn fmt(&self, _f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        todo!("Implement Display for Stack<T>, hint: write!(f, \"[...]\") using self.data")
+impl<T: fmt::Display> fmt::Display for Stack<T> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "[")?;
+        // Items are stored from bottom to top. Add commas between them.
+        for (index, item) in self.data.iter().enumerate() {
+            if index > 0 {
+                write!(f, ", ")?;
+            }
+            write!(f, "{}", item)?;
+        }
+        write!(f, "]")
     }
 }
 
