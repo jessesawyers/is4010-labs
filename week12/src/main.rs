@@ -1,4 +1,4 @@
-// Week 12: Generics and traits
+~// Week 12: Generics and traits
 //
 // Implement a generic Stack<T> data structure and make it work with Rust's
 // standard Display and Iterator traits.
